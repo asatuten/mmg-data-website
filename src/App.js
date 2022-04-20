@@ -31,7 +31,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const meteorites = [];
 
 function createData(name, catalog, category, typeclass, date, location) {
   return { name, catalog, category, typeclass, date, location };
@@ -39,21 +38,18 @@ function createData(name, catalog, category, typeclass, date, location) {
 
 async function getMeteorDatabase(db) {
   const querySnapshot = await getDocs(collection(db, "meteorites"));
+  var res = [];
   querySnapshot.forEach((doc) => {
-    meteorites.push(
-      createData(
-        doc.data().METEORITE_,
-        doc.data().CATALOG,
-        doc.data().CATEGORY,
-        doc.data().CLASS,
-        doc.data().DATE_FOUND,
-        doc.data().LOCATION
-      )
-    );
+    var docData = doc.data();
+    const myJSON = JSON.stringify(docData);
+    const parsedJSON = JSON.parse(myJSON);
+    res.push(parsedJSON);
   });
+  console.log(res);
+  return res;
 }
 
-getMeteorDatabase(db);
+const meteorites = getMeteorDatabase(db);
 console.log(meteorites);
 
 const columns = [
